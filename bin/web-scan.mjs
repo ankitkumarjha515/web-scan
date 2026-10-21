@@ -71,6 +71,21 @@ function render(report, options) {
   return lines.join('\n');
 }
 
+/** The full interactive report on the website. A saved report has its own
+ *  page; an anonymous scan is not stored, so the link reruns it there. Only
+ *  origin and path go in: a query string could carry a token. */
+function fullReportUrl(report, slug) {
+  if (slug) return `${ENDPOINT}/r/${slug}`;
+  let target = report.finalUrl;
+  try {
+    const u = new URL(report.finalUrl);
+    target = `${u.origin}${u.pathname === '/' ? '' : u.pathname}`;
+  } catch {
+    /* keep as given */
+  }
+  return `${ENDPOINT}/?url=${encodeURIComponent(target)}`;
+}
+
 function stepSummary(report, slug) {
   const rows = report.categories
     .map((c) => `| ${c.label} | ${c.score} | ${c.fail} | ${c.warn} |`)
@@ -89,7 +104,7 @@ function stepSummary(report, slug) {
     '',
     notable ? '| | Check | Detail |\n| --- | --- | --- |\n' + notable : 'Every check passed.',
     '',
-    slug ? `[Full report](${ENDPOINT}/r/${slug})` : '',
+    `**[See the full report](${fullReportUrl(report, slug)})**: charts, AI search view, link previews and a speed test.`,
     '',
   ].join('\n');
 }
@@ -174,7 +189,7 @@ async function main() {
   const reason = shouldFail(report, options);
   if (reason) {
     process.stdout.write(`  FAILED, ${reason}\n`);
-    if (slug) process.stdout.write(`  ${ENDPOINT}/r/${slug}\n\n`);
+    process.stdout.write(`  See the full report: ${fullReportUrl(report, slug)}\n\n`);
     // process.exitCode rather than process.exit(): exiting while the fetch
     // socket is still tearing down aborts the process on Windows, so CI would
     // read 127 instead of the failure code the gate is supposed to return.
@@ -183,7 +198,7 @@ async function main() {
   }
 
   process.stdout.write(`  PASSED, ${report.score}/100\n`);
-  if (slug) process.stdout.write(`  ${ENDPOINT}/r/${slug}\n\n`);
+  process.stdout.write(`  See the full report: ${fullReportUrl(report, slug)}\n\n`);
 }
 
 main();

@@ -71,7 +71,7 @@ url = "https://preflight-api.agentmarket.lol/api/mcp"
 
 | Tool | What it does |
 |---|---|
-| `scan_url` | Fresh audit of a public URL: score 0-100, grade, and every failing or warning check with id, detail and fix. 5-15 s. |
+| `scan_url` | Fresh audit of a public URL: score 0-100, grade, every failing or warning check with id, detail and fix, and `fullReportUrl` for the complete interactive report. 5-15 s. |
 | `verify_fixes` | Re-scan after a deploy and report per check id whether it now passes, the new and previous score, what is still failing, and `allFixed`. |
 | `get_report` | Read a shared report (`web-scan.agentmarket.lol/r/<slug>`) without re-scanning. |
 
@@ -92,8 +92,8 @@ Fail the build when a deploy makes the site worse.
     fail-on: score       # score | failures | any | never
 ```
 
-Writes a summary table to the job page. Pair it with a preview deployment to catch problems before they reach
-production.
+Writes a summary table to the job page, with a link to the full interactive report. Pair it with a preview
+deployment to catch problems before they reach production.
 
 ## CLI
 
@@ -104,7 +104,8 @@ node bin/web-scan.mjs https://my-app.com --min-score 90
 node bin/web-scan.mjs https://my-app.com --fail-on failures --json
 ```
 
-Exit code 0 passes, 1 fails the gate, 2 means the scan could not run.
+Exit code 0 passes, 1 fails the gate, 2 means the scan could not run. Every run ends with a link to the full
+report on the website: charts, the AI search view, link previews and a live speed test.
 
 ## What it checks
 
