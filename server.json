@@ -1,0 +1,18 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.ankitkumarjha515/web-scan",
+  "title": "Web Scan",
+  "description": "Audit any live URL: 85 SEO, AI-search, security, leaked-key and speed checks, with fixes to verify.",
+  "repository": {
+    "url": "https://github.com/ankitkumarjha515/web-scan",
+    "source": "github"
+  },
+  "websiteUrl": "https://web-scan.agentmarket.lol",
+  "version": "1.0.0",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://preflight-api.agentmarket.lol/api/mcp"
+    }
+  ]
+}

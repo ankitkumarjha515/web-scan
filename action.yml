@@ -1,0 +1,36 @@
+name: Web Scan audit
+description: Fail the build when your live site breaks. 85 checks for SEO, AI search, security headers, leaked keys and speed.
+author: AgentMarket
+branding:
+  icon: check-circle
+  color: green
+
+inputs:
+  url:
+    description: The URL to audit.
+    required: true
+  min-score:
+    description: Fail when the score is below this (used when fail-on is "score").
+    required: false
+    default: '90'
+  fail-on:
+    description: score | failures | any | never
+    required: false
+    default: score
+
+runs:
+  using: composite
+  steps:
+    - name: Run Web Scan
+      shell: bash
+      # Inputs go through env, never into the script text, so a URL with quotes or
+      # $(...) in it stays a plain argument.
+      env:
+        INPUT_URL: ${{ inputs.url }}
+        INPUT_MIN_SCORE: ${{ inputs.min-score }}
+        INPUT_FAIL_ON: ${{ inputs.fail-on }}
+      run: |
+        node "$GITHUB_ACTION_PATH/bin/web-scan.mjs" \
+          "$INPUT_URL" \
+          --min-score "$INPUT_MIN_SCORE" \
+          --fail-on "$INPUT_FAIL_ON"
